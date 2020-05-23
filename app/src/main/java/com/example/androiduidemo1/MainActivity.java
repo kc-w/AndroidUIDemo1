@@ -1,58 +1,152 @@
 package com.example.androiduidemo1;
 
-import android.graphics.Color;
-import android.os.Build;
-import android.support.v4.widget.SlidingPaneLayout;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements LeftFragment.setWebsite {
-    SlidingPaneLayout spl;
+public class MainActivity extends AppCompatActivity{
+    private android.support.v7.widget.Toolbar toolbar;
+    private android.support.design.widget.NavigationView navigationview;
+    private android.support.v4.widget.DrawerLayout drawerlayout;
+
+    /*创建一个Drawerlayout和Toolbar联动的开关*/
+    private ActionBarDrawerToggle toggle;
+
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
+    fragment1 f1;
+    fragment2 f2;
+    fragment3 f3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //沉浸式状态栏
-        //4.4以上设置状态栏为透明
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-        // 5.0以上系统状态栏透明，
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            //window.setStatusBarColor(Color.TRANSPARENT);//设置状态栏颜色和主布局背景颜色相同
-            window.setStatusBarColor(Color.parseColor("#03A9F4"));//设置状态栏为指定颜色
-        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
+        /*初始化View*/
+        initViews();
+        /*隐藏滑动条*/
+        hideScrollBar();
+        /*设置ActionBar*/
+        setActionBar();
+        /*设置Drawerlayout开关*/
+        setDrawerToggle();
+        /*设置监听器*/
+        setListener();
+    }
+    /*初始化View*/
+    private void initViews() {
+        //获取侧滑控件
+        this.drawerlayout = findViewById(R.id.drawer_layout);
+        //获取侧滑框
+        this.navigationview = findViewById(R.id.navigation_view);
+        //获取顶部标题
+        this.toolbar =  findViewById(R.id.toolbar);
+
+        f1 = new fragment1();
+
+        //设置fragment
+        fragmentManager=getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_context,f1);
+        fragmentTransaction.commit();
+
+
+
+    }
+    /*去掉navigation中的滑动条*/
+    private void hideScrollBar() {
+        navigationview.getChildAt(0).setVerticalScrollBarEnabled(false);
+    }
+    /*设置ActionBar*/
+    private void setActionBar() {
+        setSupportActionBar(toolbar);
+        /*显示Home图标*/
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+    /*设置Drawerlayout的开关,并且和Home图标联动*/
+    private void setDrawerToggle() {
+        toggle = new ActionBarDrawerToggle(this, drawerlayout, toolbar, 0, 0);
+        drawerlayout.addDrawerListener(toggle);
+        /*同步drawerlayout的状态*/
+        toggle.syncState();
+    }
+    /*设置监听器*/
+    private void setListener() {
+        navigationview.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                switch (item.getItemId()) {
+                    case R.id.single_1:
+                        f1 = new fragment1();
+                        fragmentTransaction.replace(R.id.fragment_context,f1);
+                        break;
+                    case R.id.single_2:
+                        f2 = new fragment2();
+                        fragmentTransaction.replace(R.id.fragment_context,f2);
+                        break;
+                    case R.id.single_3:
+                        f3 = new fragment3();
+                        fragmentTransaction.replace(R.id.fragment_context,f3);
+                        break;
+                    case R.id.single_4:
+                        break;
+                    case R.id.item_1:
+                        break;
+                    case R.id.item_2:
+                        break;
+                    case R.id.item_3:
+                        break;
+                    case R.id.item_4:
+                        finish();
+                        break;
+                }
+                //提交事务
+                fragmentTransaction.commit();
+                //点击后关闭抽屉
+                drawerlayout.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
     }
 
-    private void init() {
-        spl = (SlidingPaneLayout) findViewById(R.id.spl);
-        spl.closePane();
-        changeWebsite("http://www.baidu.com");//设置初始的webview界面为baidu
+
+    @Override//创建右上角菜单栏选项
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
     }
 
-    //重写方法设置webview显示界面
-    @Override
-    public void changeWebsite(String url) {
-        RightFragment rf = (RightFragment) MainActivity.this.getSupportFragmentManager().findFragmentById(R.id.fragment_right);
-        WebView webView = rf.getView();
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        WebViewClient client = new WebViewClient();
-        webView.setWebViewClient(client);
-        webView.loadUrl(url);
+    @Override//菜单点击监听
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_settings1:
+                Toast.makeText(this,"点击了setting1",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_settings2:
+                Toast.makeText(this,"点击了setting2",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_settings3:
+                Toast.makeText(this,"点击了setting3",Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
     }
+
 }
