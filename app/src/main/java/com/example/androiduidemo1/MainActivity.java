@@ -22,11 +22,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import okhttp3.*;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.*;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -176,19 +182,16 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 //得到存储的sessionid
                 String sessionid= preferences.getString("sessionid","null");
-
                 //创建一个OkHttpClient对象
                 OkHttpClient client=new OkHttpClient();
-
-                MultipartBody.Builder builder = new MultipartBody.Builder()
+                RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
+                RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart(
-                                "img",
-                                file.getName(),
-                                RequestBody.create(MediaType.parse("image/jpg"),file)
-                        );
-                //使用 MultipartBody 构建 RequestBody
-                RequestBody requestBody = builder.build();
+                        .addFormDataPart("image", file.getName(), fileBody)
+                        .addFormDataPart("num1", "test1")
+                        .addFormDataPart("num2", "test2")
+                        .build();
+
                 // 传入 RequestBody
                 Request request = new Request.Builder()
                         .addHeader("cookie",sessionid)
