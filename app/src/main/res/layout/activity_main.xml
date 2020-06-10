@@ -6,35 +6,13 @@
     android:orientation="vertical"
     tools:context="com.example.androiduidemo1.MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+
+    <EditText
+        android:id="@+id/edit1"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:background="@color/colorPrimary"
-        app:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
-    </android.support.v7.widget.Toolbar>
-
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <FrameLayout
-            android:id="@+id/fragment_context"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="wrap_content"/>
 
 
-        <android.support.design.widget.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="240dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:itemIconTint="@color/colorAccent"
-            app:menu="@menu/navigation"
-            app:headerLayout="@layout/header"><!--headerLayout设置侧滑框,menu设置侧滑框栏-->
-        </android.support.design.widget.NavigationView>
 
-    </android.support.v4.widget.DrawerLayout>
 
 </LinearLayout>
