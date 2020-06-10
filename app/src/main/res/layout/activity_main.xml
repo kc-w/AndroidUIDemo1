@@ -6,11 +6,19 @@
     android:orientation="vertical"
     tools:context="com.example.androiduidemo1.MainActivity">
 
+    <Button
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="按钮"/>
 
-    <EditText
-        android:id="@+id/edit1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
+
+    <com.example.androiduidemo1.MyEditText
+            android:id="@+id/edit1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入图文信息"/>
 
 
 
